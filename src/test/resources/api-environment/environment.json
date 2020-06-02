@@ -1,0 +1,9 @@
+{
+  "defaultEnvironment": "ft1-优惠券",
+  "environmentList": [
+    {
+      "environmentName": "ft1-优惠券",
+      "baseURL": "http://10.158.226.3/market-center/"
+    }
+  ]
+}
