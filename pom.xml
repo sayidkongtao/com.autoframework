@@ -126,6 +126,12 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.12</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-serialization-runtime</artifactId>
+            <version>0.20.0</version>
+        </dependency>
     </dependencies>
 
     <build>

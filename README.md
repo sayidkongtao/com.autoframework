@@ -1,5 +1,5 @@
 
-## Allure TestNG Example
+## Flutter Allure TestNG Example
 
 ### Getting Started
 
@@ -18,6 +18,9 @@ $ ./mvnw io.qameta.allure:allure-maven:report
 
 在window系统上，命令为：mvnw io.qameta.allure:allure-maven:report
 ```
+
+Demo路径： autoframework/demo/TestDemoModule.java
+simpleTestThree所需安装包在：app/flutter_native_debug.apk
 
 ### More
 
