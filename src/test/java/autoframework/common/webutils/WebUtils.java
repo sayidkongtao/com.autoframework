@@ -28,8 +28,45 @@ public class WebUtils {
      */
     public void click(FlutterElement flutterElement) {
         logger.info("Click the flutterElement: " + flutterElement);
+        //Todo: Have to make sure element presence at current page since the flutter-appium issue:
+        //https://github.com/truongsinh/appium-flutter-driver/issues/59
         waitForElementVisible(flutterElement);
         flutterElement.click();
+    }
+
+    /**
+     *
+     * @param webElement
+     */
+    public void click(WebElement webElement) {
+        click(webElement, false);
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param needToWaitVisible
+     */
+    public void click(WebElement webElement, boolean needToWaitVisible) {
+
+        if (needToWaitVisible) {
+            click(webElement, timeOutInSeconds, sleepInMillis);
+        } else {
+            logger.info("Click the webElement: " + webElement);
+            webElement.click();
+        }
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param timeOutInSeconds
+     * @param sleepInMillis
+     */
+    public void click(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
+        logger.info("Click the webElement: " + webElement);
+        waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
+        webElement.click();
     }
 
     /**
@@ -41,6 +78,43 @@ public class WebUtils {
         logger.info("Input the text: " + text + " into the flutterElement: " + flutterElement);
         waitForElementVisible(flutterElement);
         flutterElement.sendKeys(text);
+    }
+
+    /**
+     *
+     * @param webElement
+     */
+    public String inputText(WebElement webElement) {
+        return inputText(webElement, false);
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param needToWaitVisible
+     * @return
+     */
+    public String inputText(WebElement webElement, boolean needToWaitVisible) {
+
+        if (needToWaitVisible) {
+            return inputText(webElement, timeOutInSeconds, sleepInMillis);
+        } else {
+            logger.info("Get the text of the webElement: " + webElement);
+            return webElement.getText();
+        }
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param timeOutInSeconds
+     * @param sleepInMillis
+     * @return
+     */
+    public String inputText(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
+        logger.info("Get the text of the webElement: " + webElement);
+        waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
+        return webElement.getText();
     }
 
     /**
@@ -98,11 +172,11 @@ public class WebUtils {
     /**
      *
      * @param webElement
+     * @return
      */
     public void waitForElementVisible(WebElement webElement) {
         logger.info("Wait for element: " + webElement);
-        WebDriverWait webDriverWait = new WebDriverWait(this.driver, timeOutInSeconds, sleepInMillis);
-        webDriverWait.until(visibilityOf(webElement));
+        waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
     }
 
     /**
@@ -110,6 +184,7 @@ public class WebUtils {
      * @param webElement
      * @param timeOutInSeconds
      * @param sleepInMillis
+     * @return
      */
     public void waitForElementVisible(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
         logger.info("Wait for element: " + webElement);
@@ -143,7 +218,7 @@ public class WebUtils {
      *
      * @param by
      */
-    public WebElement waitForElementVisible(By by) throws Exception {
+    public WebElement waitForElementVisible(By by) {
         return waitForElementVisible(by, timeOutInSeconds, sleepInMillis);
     }
 
@@ -155,14 +230,10 @@ public class WebUtils {
      * @return
      * @throws Exception
      */
-    public WebElement waitForElementVisible(By by, long timeOutInSeconds, long sleepInMillis) throws Exception {
+    public WebElement waitForElementVisible(By by, long timeOutInSeconds, long sleepInMillis) {
         logger.info("Wait for element: " + by);
         WebDriverWait webDriverWait = new WebDriverWait(this.driver, timeOutInSeconds, sleepInMillis);
         WebElement webElement = webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(by));
-
-        if (webElement == null) {
-            throw new Exception("Failed to find the element" + by);
-        }
 
         return webElement;
     }
