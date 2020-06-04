@@ -1,5 +1,6 @@
 package autoframework.demo;
 
+import autoframework.common.webutils.WebUtils;
 import autoframework.pojo.User;
 import autoframework.testcaes.basetest.BaseTest;
 import autoframework.utils.Utils;
@@ -7,10 +8,13 @@ import io.appium.java_client.MobileElement;
 import io.qameta.allure.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 import pro.truongsinh.appium_flutter.FlutterFinder;
 import pro.truongsinh.appium_flutter.finder.FlutterElement;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+
 import static io.qameta.allure.Allure.step;
 
 /**
@@ -67,12 +71,13 @@ public class TestDemoModule  extends BaseTest {
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
     public void simpleTestThree() throws MalformedURLException {
 
-        getAndroidDriver();
+        initAndroidDriver();
 
         // 切换成本地的代码
         driver.context("NATIVE_APP");
 
         MobileElement openNativeWebElement = driver.findElementById("com.taobao.idlefish.flutterboostexample:id/open_flutter");
+
         openNativeWebElement.click();
         logger.info("点击完成跳转至flutter页面完成");
 
@@ -83,7 +88,18 @@ public class TestDemoModule  extends BaseTest {
         FlutterElement buttonFinder = find.byValueKey("openFirstPage");
         buttonFinder.click();
 
+        driver.executeScript("flutter:scroll", find.byType("ListView"), new HashMap<String, Object>() {{
+            put("item", find.byType("TextField"));
+            put("dx", 50);
+            put("dy", 100);
+            put("durationMilliseconds", 200);
+            put("frequency", 30);
+        }});
+
         logger.info("openFirstPage页面完成");
+
+        WebUtils webUtils = new WebUtils(driver);
+        webUtils.isElementVisible(openNativeWebElement);
 
         driver.quit();
     }

@@ -21,7 +21,7 @@ public class BaseTest {
     public static AppiumDriver<MobileElement> driver;
     private static Logger logger = LogManager.getLogger(AppiumDriver.class);
 
-    public static void getAndroidDriver() throws MalformedURLException {
+    public static void initAndroidDriver() throws MalformedURLException {
         logger.info("********************初始化Android Driver*******************");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", System.getProperty("APPIUM_DEVICE_NAME", "AKC7N18907000186"));
@@ -60,11 +60,12 @@ public class BaseTest {
 
         try {
             driver = new AndroidDriver(new URL(System.getProperty("APPIUM_URL", "http://127.0.0.1:4723/wd/hub")), capabilities);
-            logger.info("Android Driver初始化成功");
         } catch (Exception err) {
             logger.info("Android Driver初始化失败，错误详细信息参考如下");
             logger.error(err);
             throw err;
         }
+
+        logger.info("Android Driver初始化成功");
     }
 }
