@@ -1,22 +1,15 @@
 package autoframework.demo;
 
+import autoframework.demo.page.FirstPage;
 import autoframework.pojo.User;
 import autoframework.testcaes.basetest.BaseTest;
 import autoframework.utils.Utils;
-import io.appium.java_client.MobileElement;
 import io.qameta.allure.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.Test;
-import pro.truongsinh.appium_flutter.FlutterFinder;
-import pro.truongsinh.appium_flutter.finder.FlutterElement;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import static io.qameta.allure.Allure.step;
 
 /**
@@ -76,27 +69,29 @@ public class TestDemoModule  extends BaseTest {
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
     public void simpleTestThree() throws MalformedURLException {
 
-        initAndroidDriver();
+        FirstPage firstPage = new FirstPage(driver);
+        firstPage.goToFlutterPage();
+        step("step 1: 点击完成跳转至flutter页面完成");
 
-        // 切换成本地的代码
-        driver.context("NATIVE_APP");
+        firstPage.goToOpenFirstPage();
+        step("step 2: openFirstPage页面完成");
+    }
 
-        MobileElement openNativeWebElement = driver.findElementById("com.taobao.idlefish.flutterboostexample:id/open_flutter");
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Flutter 测试集成-失败截图")
+    @Test(description = "[Case number]: <Case Summary:> Flutter测试集成-失败截图")
+    @Description("Case Steps: " +
+            "1. xxxxxxxxxxx " +
+            "2. xxxxxxxxxxx " +
+            "3. xxxxxxxxxxx " +
+            "4. xxxxxxxxxxx " +
+            "Expected Result: xxxxxxxxxxxxxxxxxxx")
+    public void simpleTestFour() throws MalformedURLException {
 
-        openNativeWebElement.click();
-        logger.info("点击完成跳转至flutter页面完成");
-
-        // 切换成flutter端的代码
-        driver.context("FLUTTER");
-
-        FlutterFinder find = new FlutterFinder(driver);
-        FlutterElement buttonFinder = find.byValueKey("openFirstPage");
-        buttonFinder.click();
-
-        logger.info("openFirstPage页面完成");
+        FirstPage firstPage = new FirstPage(driver);
+        step("step 1: 打开App");
         int a = 1/0;
-
-        driver.quit();
+        step("step 2: 干个啥事呢");
     }
 
 }

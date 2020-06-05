@@ -8,6 +8,9 @@ import io.appium.java_client.android.AndroidDriver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Listeners;
 
 import java.io.File;
@@ -21,7 +24,23 @@ import java.util.List;
 public class BaseTest {
 
     public static AppiumDriver<MobileElement> driver;
-    private static Logger logger = LogManager.getLogger(AppiumDriver.class);
+    protected static Logger logger = LogManager.getLogger(AppiumDriver.class);
+
+    @BeforeSuite
+    public void setUp() throws MalformedURLException {
+        logger.info("********************测试套件开始执行********************");
+        initAndroidDriver();
+    }
+
+    @BeforeClass
+    public void classSetup() {
+    }
+
+    @AfterSuite
+    public void closeDriver() {
+        driver.quit();
+        logger.info("********************测试套件执行结束********************");
+    }
 
     public static void initAndroidDriver() throws MalformedURLException {
         logger.info("********************初始化Android Driver*******************");

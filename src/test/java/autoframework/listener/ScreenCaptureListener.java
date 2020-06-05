@@ -7,8 +7,6 @@ import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
@@ -35,12 +33,14 @@ public class ScreenCaptureListener extends TestListenerAdapter {
         BaseTest bt = (BaseTest) tr.getInstance();
         AppiumDriver driver = bt.getDriver();
         try {
-            Utils.sleepBySecond(1);
+            driver.context("NATIVE_APP");
             byte[] screenshotAs = driver.getScreenshotAs(OutputType.BYTES);
             return screenshotAs;
         } catch (Exception ignore){
             logger.error("Failed to capture the screen since: " + ignore);
             return "截图失败".getBytes();
+        } finally {
+            driver.context("FLUTTER");
         }
     }
 
