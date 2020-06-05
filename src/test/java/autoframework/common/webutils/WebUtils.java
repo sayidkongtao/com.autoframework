@@ -99,7 +99,7 @@ public class WebUtils {
         if (needToWaitVisible) {
             return inputText(webElement, timeOutInSeconds, sleepInMillis);
         } else {
-            logger.info("Get the text of the webElement: " + webElement);
+            logger.info("Input the text of the webElement: " + webElement);
             return webElement.getText();
         }
     }
@@ -112,7 +112,7 @@ public class WebUtils {
      * @return
      */
     public String inputText(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
-        logger.info("Get the text of the webElement: " + webElement);
+        logger.info("Input the text of the webElement: " + webElement);
         waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
         return webElement.getText();
     }
@@ -125,6 +125,43 @@ public class WebUtils {
         logger.info("Clear the text of the flutterElement: " + flutterElement);
         waitForElementVisible(flutterElement);
         flutterElement.clear();
+    }
+
+    /**
+     *
+     * @param webElement
+     */
+    public void clearText(WebElement webElement) {
+        clearText(webElement, false);
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param needToWaitVisible
+     * @return
+     */
+    public void clearText(WebElement webElement, boolean needToWaitVisible) {
+
+        if (needToWaitVisible) {
+            clearText(webElement, timeOutInSeconds, sleepInMillis);
+        } else {
+            logger.info("Clear the text of the webElement: " + webElement);
+            webElement.clear();
+        }
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param timeOutInSeconds
+     * @param sleepInMillis
+     * @return
+     */
+    public void clearText(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
+        logger.info("Clear the text of the webElement: " + webElement);
+        waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
+        webElement.clear();
     }
 
     /**

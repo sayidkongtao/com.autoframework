@@ -1,6 +1,5 @@
 package autoframework.demo;
 
-import autoframework.common.webutils.WebUtils;
 import autoframework.pojo.User;
 import autoframework.testcaes.basetest.BaseTest;
 import autoframework.utils.Utils;
@@ -8,13 +7,16 @@ import io.appium.java_client.MobileElement;
 import io.qameta.allure.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 import pro.truongsinh.appium_flutter.FlutterFinder;
 import pro.truongsinh.appium_flutter.finder.FlutterElement;
-import java.net.MalformedURLException;
-import java.util.HashMap;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import static io.qameta.allure.Allure.step;
 
 /**
@@ -26,6 +28,7 @@ import static io.qameta.allure.Allure.step;
 public class TestDemoModule  extends BaseTest {
     private Logger logger = LogManager.getLogger(TestDemoModule.class);
 
+
     @Severity(SeverityLevel.CRITICAL)
     @Story("确保用户正常登录")
     @Test(description = "[Case number]: <Case Summary:> 确保用户登录")
@@ -35,8 +38,10 @@ public class TestDemoModule  extends BaseTest {
             "3. xxxxxxxxxxx " +
             "4. xxxxxxxxxxx " +
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
-    public void simpleTestOne() {
+    public void simpleTestOne() throws IOException {
+        Utils.addAttachment("登录用户", Utils.getAbsolutePath("users/username.json"));
         User user = Utils.deserialize("users/username.json", User.class);
+
         step("step 1: xxxxxxxxxxxxxxxxxxxx");
 
         logger.info("登录用户： " + Utils.toJSON(user));
@@ -88,18 +93,8 @@ public class TestDemoModule  extends BaseTest {
         FlutterElement buttonFinder = find.byValueKey("openFirstPage");
         buttonFinder.click();
 
-        driver.executeScript("flutter:scroll", find.byType("ListView"), new HashMap<String, Object>() {{
-            put("item", find.byType("TextField"));
-            put("dx", 50);
-            put("dy", 100);
-            put("durationMilliseconds", 200);
-            put("frequency", 30);
-        }});
-
         logger.info("openFirstPage页面完成");
-
-        WebUtils webUtils = new WebUtils(driver);
-        webUtils.isElementVisible(openNativeWebElement);
+        int a = 1/0;
 
         driver.quit();
     }

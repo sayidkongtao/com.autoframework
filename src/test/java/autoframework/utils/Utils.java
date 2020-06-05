@@ -2,10 +2,14 @@ package autoframework.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.qameta.allure.Allure;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Utils {
@@ -85,6 +89,16 @@ public class Utils {
     public static void write(String content, String filename) throws IOException {
         try (FileWriter fileWriter = new FileWriter(filename)) {
             fileWriter.write(content);
+        }
+    }
+
+    public static void addAttachment(String instruction, String pathToAttachmentContnet) {
+        Path content = Paths.get(pathToAttachmentContnet);
+        try (InputStream is = Files.newInputStream(content)) {
+            Allure.addAttachment(instruction, is);
+        } catch (Exception ignore) {
+            logger.error("Failed to add attachment since " + ignore);
+            Allure.addAttachment("Failed to add attachment", "Failed to add attachment since" + ignore);
         }
     }
 }

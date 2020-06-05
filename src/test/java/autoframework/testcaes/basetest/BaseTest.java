@@ -1,13 +1,14 @@
 package autoframework.testcaes.basetest;
 
+import autoframework.listener.ScreenCaptureListener;
 import autoframework.utils.Utils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.Listeners;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+@Listeners({ScreenCaptureListener.class})
 public class BaseTest {
 
     public static AppiumDriver<MobileElement> driver;
@@ -67,5 +69,9 @@ public class BaseTest {
         }
 
         logger.info("Android Driver初始化成功");
+    }
+
+    public AppiumDriver<MobileElement> getDriver() {
+        return this.driver;
     }
 }
