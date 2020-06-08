@@ -84,8 +84,8 @@ public class WebUtils {
      *
      * @param webElement
      */
-    public String inputText(WebElement webElement) {
-        return inputText(webElement, false);
+    public void inputText(WebElement webElement, String text) {
+        inputText(webElement, text, false);
     }
 
     /**
@@ -94,12 +94,49 @@ public class WebUtils {
      * @param needToWaitVisible
      * @return
      */
-    public String inputText(WebElement webElement, boolean needToWaitVisible) {
+    public void inputText(WebElement webElement, String text, boolean needToWaitVisible) {
 
         if (needToWaitVisible) {
-            return inputText(webElement, timeOutInSeconds, sleepInMillis);
+            inputText(webElement, text, timeOutInSeconds, sleepInMillis);
         } else {
             logger.info("Input the text of the webElement: " + webElement);
+            webElement.sendKeys(text);
+        }
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param timeOutInSeconds
+     * @param sleepInMillis
+     * @return
+     */
+    public void inputText(WebElement webElement, String text, long timeOutInSeconds, long sleepInMillis) {
+        logger.info("Input the text of the webElement: " + webElement);
+        waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
+        webElement.sendKeys(text);
+    }
+
+    /**
+     *
+     * @param webElement
+     */
+    public String getText(WebElement webElement) {
+        return getText(webElement, false);
+    }
+
+    /**
+     *
+     * @param webElement
+     * @param needToWaitVisible
+     * @return
+     */
+    public String getText(WebElement webElement, boolean needToWaitVisible) {
+
+        if (needToWaitVisible) {
+            return getText(webElement, timeOutInSeconds, sleepInMillis);
+        } else {
+            logger.info("Get the text of the webElement: " + webElement);
             return webElement.getText();
         }
     }
@@ -111,8 +148,8 @@ public class WebUtils {
      * @param sleepInMillis
      * @return
      */
-    public String inputText(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
-        logger.info("Input the text of the webElement: " + webElement);
+    public String getText(WebElement webElement, long timeOutInSeconds, long sleepInMillis) {
+        logger.info("Get the text of the webElement: " + webElement);
         waitForElementVisible(webElement, timeOutInSeconds, sleepInMillis);
         return webElement.getText();
     }
