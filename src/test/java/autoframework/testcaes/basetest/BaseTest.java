@@ -74,8 +74,8 @@ public class BaseTest {
             try {
                 ele.getAbsolutePath();
                 Runtime.getRuntime().exec(String.format("chmod +x %s", ele.getAbsolutePath()));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignore) {
+                //ignore.printStackTrace();
             }
         });
 
