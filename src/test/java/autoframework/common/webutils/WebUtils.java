@@ -1,8 +1,11 @@
 package autoframework.common.webutils;
 
+import autoframework.utils.Utils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.functions.ExpectedCondition;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -10,6 +13,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pro.truongsinh.appium_flutter.finder.FlutterElement;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WebUtils {
 
@@ -20,6 +26,84 @@ public class WebUtils {
 
     public WebUtils(AppiumDriver driver) {
         this.driver = driver;
+    }
+
+
+    /**
+     *
+     * @param driver
+     */
+    public void reLaunchApp(AppiumDriver driver) {
+        int count = 5;
+
+        do {
+            try {
+                logger.info("Relaunch app and will try: " + count + " times if failed");
+                driver.closeApp();
+                Utils.sleepBySecond(3);
+                driver.resetApp();
+                break;
+            } catch (Exception err) {
+                if (err.getMessage().contains("Connection was refused to port")) {
+                    logger.info("Encounter port error will try again after 20s");
+                    Utils.sleepBySecond(5);
+                    count = count - 1;
+                } else {
+                    throw err;
+                }
+            }
+        } while (count > 0);
+    }
+
+    /**
+     *
+     * @param driver
+     * @throws Exception
+     */
+    public void changeContextToWebView(AppiumDriver driver, String webViewContent) throws Exception {
+        logger.info("Try to switch to webview");
+        int count = 5;
+        boolean isSwitch = false;
+        do {
+            Utils.sleepBySecond(2);
+            Set<String> contextSet = driver.getContextHandles();
+
+            if (contextSet.stream().anyMatch(webViewContent::equalsIgnoreCase)) {
+                driver.context(webViewContent);
+                logger.info("Success to switch to webview");
+                isSwitch = true;
+                break;
+            }
+
+            count = count - 1;
+
+        } while (count > 0);
+
+        if (!isSwitch) {
+            throw new Exception("Only one content: " + driver.getContext());
+        }
+    }
+
+    /**
+     *
+     * @param driver
+     * @throws Exception
+     */
+    public void changeContextToNativeApp(AppiumDriver driver) throws Exception {
+        logger.info("Try to switch to NATIVE_APP");
+        driver.context("NATIVE_APP");
+        logger.info("Success to switch to content NATIVE_APP");
+    }
+
+    /**
+     *
+     * @param driver
+     * @throws Exception
+     */
+    public void changeContextToFlutter(AppiumDriver driver) throws Exception {
+        logger.info("Try to switch to Flutter");
+        driver.context("FLUTTER");
+        logger.info("Success to switch to content Flutter");
     }
 
     /**
