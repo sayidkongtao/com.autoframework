@@ -3,9 +3,10 @@ package autoframework.common.webutils;
 import autoframework.utils.Utils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.functions.ExpectedCondition;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -14,8 +15,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pro.truongsinh.appium_flutter.finder.FlutterElement;
 
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WebUtils {
 
@@ -28,6 +30,33 @@ public class WebUtils {
         this.driver = driver;
     }
 
+    /**
+     *
+     * @param flutterElement
+     */
+    public void scrollIntoView(FlutterElement flutterElement) {
+        logger.info("scrollIntoView: " + flutterElement);
+        waitForElementVisible(flutterElement);
+        driver.executeScript("flutter:scrollIntoView", flutterElement);
+    }
+
+    /**
+     *
+     * @param durationTime
+     * @param scaleStartWidth
+     * @param scaleStartHeight
+     * @param scaleEndWidth
+     * @param scaleEndHeight
+     */
+    public void swipePage(int durationTime, double scaleStartWidth, double scaleStartHeight, double scaleEndWidth, double scaleEndHeight) {
+        int width = driver.manage().window().getSize().width;
+        int height = driver.manage().window().getSize().height;
+        Duration duration = Duration.ofMillis(durationTime);
+        new TouchAction<>(driver).press(PointOption.point((int) (width * scaleStartWidth), (int) (height * scaleStartHeight)))
+                .waitAction(WaitOptions.waitOptions(duration))
+                .moveTo(PointOption.point((int) (width * scaleEndWidth), (int) (height * scaleEndHeight))).release().perform();
+        logger.info("swipe page");
+    }
 
     /**
      *
