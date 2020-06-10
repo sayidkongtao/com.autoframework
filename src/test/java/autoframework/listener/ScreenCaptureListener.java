@@ -32,6 +32,7 @@ public class ScreenCaptureListener extends TestListenerAdapter {
     public byte[] takeScreenShot(ITestResult tr) {
         BaseTest bt = (BaseTest) tr.getInstance();
         AppiumDriver driver = bt.getDriver();
+        String currentContext = driver.getContext();
         try {
             driver.context("NATIVE_APP");
             byte[] screenshotAs = driver.getScreenshotAs(OutputType.BYTES);
@@ -40,7 +41,7 @@ public class ScreenCaptureListener extends TestListenerAdapter {
             logger.error("Failed to capture the screen since: " + ignore);
             return "截图失败".getBytes();
         } finally {
-            driver.context("FLUTTER");
+            driver.context(currentContext);
         }
     }
 
