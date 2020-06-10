@@ -8,10 +8,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,16 +26,27 @@ public class BaseTest {
     @BeforeSuite
     public void setUp() throws MalformedURLException {
         logger.info("********************测试套件开始执行********************");
-        initAndroidDriver();
+
     }
 
     @BeforeClass
     public void classSetup() {
     }
 
+    @BeforeMethod
+    public void methodSetup() throws MalformedURLException {
+        //https://github.com/truongsinh/appium-flutter-driver/issues/44
+        initAndroidDriver();
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        logger.info("关闭驱动");
+        driver.quit();
+    }
+
     @AfterSuite
     public void closeDriver() {
-        driver.quit();
         logger.info("********************测试套件执行结束********************");
     }
 
