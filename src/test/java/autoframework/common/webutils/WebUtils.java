@@ -14,9 +14,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pro.truongsinh.appium_flutter.finder.FlutterElement;
-
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Set;
 
 public class WebUtils {
@@ -49,20 +47,27 @@ public class WebUtils {
      * @param scaleEndHeight
      */
     public void swipePage(int durationTime, double scaleStartWidth, double scaleStartHeight, double scaleEndWidth, double scaleEndHeight) {
-        int width = driver.manage().window().getSize().width;
-        int height = driver.manage().window().getSize().height;
-        Duration duration = Duration.ofMillis(durationTime);
-        new TouchAction<>(driver).press(PointOption.point((int) (width * scaleStartWidth), (int) (height * scaleStartHeight)))
-                .waitAction(WaitOptions.waitOptions(duration))
-                .moveTo(PointOption.point((int) (width * scaleEndWidth), (int) (height * scaleEndHeight))).release().perform();
-        logger.info("swipe page");
+        String currentContext = driver.getContext();
+
+        try {
+            changeContextToNativeApp();
+            int width = driver.manage().window().getSize().width;
+            int height = driver.manage().window().getSize().height;
+            Duration duration = Duration.ofMillis(durationTime);
+            new TouchAction<>(driver).press(PointOption.point((int) (width * scaleStartWidth), (int) (height * scaleStartHeight)))
+                    .waitAction(WaitOptions.waitOptions(duration))
+                    .moveTo(PointOption.point((int) (width * scaleEndWidth), (int) (height * scaleEndHeight))).release().perform();
+            logger.info("swipe page");
+        } finally {
+            driver.context(currentContext);
+        }
+
     }
 
     /**
      *
-     * @param driver
      */
-    public void reLaunchApp(AppiumDriver driver) {
+    public void reLaunchApp() {
         int count = 5;
 
         do {
@@ -86,10 +91,9 @@ public class WebUtils {
 
     /**
      *
-     * @param driver
      * @throws Exception
      */
-    public void changeContextToWebView(AppiumDriver driver, String webViewContent) throws Exception {
+    public void changeContextToWebView(String webViewContent) throws Exception {
         logger.info("Try to switch to webview");
         int count = 5;
         boolean isSwitch = false;
@@ -115,10 +119,8 @@ public class WebUtils {
 
     /**
      *
-     * @param driver
-     * @throws Exception
      */
-    public void changeContextToNativeApp(AppiumDriver driver) throws Exception {
+    public void changeContextToNativeApp(){
         logger.info("Try to switch to NATIVE_APP");
         driver.context("NATIVE_APP");
         logger.info("Success to switch to content NATIVE_APP");
@@ -126,10 +128,8 @@ public class WebUtils {
 
     /**
      *
-     * @param driver
-     * @throws Exception
      */
-    public void changeContextToFlutter(AppiumDriver driver) throws Exception {
+    public void changeContextToFlutter(){
         logger.info("Try to switch to Flutter");
         driver.context("FLUTTER");
         logger.info("Success to switch to content Flutter");
