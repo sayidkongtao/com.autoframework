@@ -7,6 +7,7 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.functions.ExpectedCondition;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -121,18 +122,26 @@ public class WebUtils {
      *
      */
     public void changeContextToNativeApp(){
-        logger.info("Try to switch to NATIVE_APP");
-        driver.context("NATIVE_APP");
-        logger.info("Success to switch to content NATIVE_APP");
+        logger.info("Try to set Context to Native");
+        String currentContext = driver.getContext();
+        if (!StringUtils.equalsAnyIgnoreCase("NATIVE_APP", currentContext)) {
+            logger.info("To set Context to NATIVE_APP");
+            driver.context("NATIVE_APP");
+        }
+        logger.info("Success to set Context to Native");
     }
 
     /**
      *
      */
     public void changeContextToFlutter(){
-        logger.info("Try to switch to Flutter");
-        driver.context("FLUTTER");
-        logger.info("Success to switch to content Flutter");
+        logger.info("Try to set Context to Flutter");
+        String currentContext = driver.getContext();
+        if (!StringUtils.equalsAnyIgnoreCase("FLUTTER", currentContext)) {
+            logger.info("To set Context to FLUTTER");
+            driver.context("FLUTTER");
+        }
+        logger.info("Success to set Context to FLUTTER");
     }
 
     /**
@@ -558,5 +567,98 @@ public class WebUtils {
             //logger.info("wait for element " + element);
         }
         return status ? element : null;
+    }
+
+    /**
+     * 当切换到webview click事件没作用时，可以尝试调用该方法
+     * @param element
+     * @param webViewContent
+     * @throws Exception
+     */
+    public void tapOnElement(WebElement element, String webViewContent) throws Exception {
+        float[] elementLocation = getElementCenterByComparingWebViewAndNative(element, webViewContent);
+        int elementCoordinateX, elementCoordinateY;
+        elementCoordinateX = Math.round(elementLocation[0]);
+        elementCoordinateY = Math.round(elementLocation[1]);
+        TouchAction action = new TouchAction(driver);
+        action.press(PointOption.point(elementCoordinateX, elementCoordinateY)).release().perform();
+        Utils.sleepBySecond(2);
+        //setContextToWebview();
+        changeContextToWebView(webViewContent);
+    }
+
+    private float[] getElementCenterByComparingWebViewAndNative(WebElement element, String webViewContent) throws Exception {
+        //setContextToWebview();
+        changeContextToWebView(webViewContent);
+        JavascriptExecutor js = driver;
+
+        // get webview dimensions
+        Long webviewWidth = (Long) js.executeScript("return screen.width");
+        logger.info("webviewWidth: " + webviewWidth);
+
+        Long webviewHeight = (Long) js.executeScript("return screen.height");
+        logger.info("webviewHeight: " + webviewHeight);
+
+        // get element location in webview
+        int elementLocationX = element.getLocation().getX();
+        logger.info("elementLocationX: " + elementLocationX);
+
+        int elementLocationY = element.getLocation().getY();
+        logger.info("elementLocationY: " + elementLocationY);
+
+        // get the center location of the element
+        int elementWidthCenter = element.getSize().getWidth() / 2;
+        logger.info("elementWidthCenter: " + elementWidthCenter);
+
+        int elementHeightCenter = element.getSize().getHeight() / 2;
+        logger.info("elementHeightCenter: " + elementHeightCenter);
+
+        int elementWidthCenterLocation = elementWidthCenter + elementLocationX;
+        logger.info("elementWidthCenterLocation: " + elementWidthCenterLocation);
+
+        int elementHeightCenterLocation = elementHeightCenter + elementLocationY;
+        logger.info("elementHeightCenterLocation: " + elementHeightCenterLocation);
+
+        int webViewWidgetHeight = driver.manage().window().getSize().height;
+        logger.info("webViewWidgetHeight: " + webViewWidgetHeight);
+
+        // switch to native context
+        changeContextToNativeApp();
+        float deviceScreenWidth, deviceScreenHeight;
+
+        if (driver.getCapabilities().getCapability("deviceScreenSize") != null) {
+            //driver.getCapabilities().getCapability("deviceScreenSize").toString().split("x")
+            deviceScreenWidth = Float.valueOf(driver.getCapabilities().getCapability("deviceScreenSize").toString().split("x")[0]);
+            deviceScreenHeight = Float.valueOf(driver.getCapabilities().getCapability("deviceScreenSize").toString().split("x")[1]);
+        } else {
+            // get the actual screen dimensions
+            deviceScreenWidth = driver.manage().window().getSize().getWidth();
+            deviceScreenHeight = driver.manage().window().getSize().getHeight();
+        }
+
+        logger.info("deviceScreenWidth: " + deviceScreenWidth);
+        logger.info("deviceScreenHeight: " + deviceScreenHeight);
+
+        // offset
+        int offset = driver.manage().window().getSize().getHeight() - webViewWidgetHeight;
+        logger.info("offset: " + offset);
+
+        // calculate the ratio between actual screen dimensions and webview dimensions
+        float ratioWidth = deviceScreenWidth / webviewWidth.intValue();
+        logger.info("ratioWidth: " + ratioWidth);
+
+        float ratioHeight = deviceScreenHeight / webviewHeight.intValue();
+        logger.info("ratioHeight: " + ratioHeight);
+
+        // calculate the actual element location on the screen
+        float elementCenterActualX = elementWidthCenterLocation * ratioWidth;
+        logger.info("elementCenterActualX: " + elementCenterActualX);
+
+        float elementCenterActualY = (elementHeightCenterLocation * ratioHeight) + offset;
+        logger.info("elementCenterActualY: " + elementCenterActualY);
+
+        float[] elementLocation = {elementCenterActualX, elementCenterActualY};
+
+        return elementLocation;
     }
 }
