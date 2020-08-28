@@ -54,7 +54,7 @@ public class BaseTest {
         logger.info("********************初始化Android Driver*******************");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", System.getProperty("APPIUM_DEVICE_NAME", "AKC7N18907000186"));
-        capabilities.setCapability("platformVersion", System.getProperty("APPIUM_DEVICE_VERSION", "9"));
+        capabilities.setCapability("platformVersion", System.getProperty("APPIUM_DEVICE_VERSION", "10"));
         capabilities.setCapability("automationName", "Flutter");
         capabilities.setCapability("platformName", System.getProperty("APPIUM_PLATFORM", "Android"));
         capabilities.setCapability("appPackage", "com.taobao.idlefish.flutterboostexample");
