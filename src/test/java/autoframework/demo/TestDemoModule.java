@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.testng.annotations.Test;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import static io.qameta.allure.Allure.step;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author Sayid
@@ -34,11 +36,8 @@ public class TestDemoModule  extends BaseTest {
     public void simpleTestOne() throws IOException {
         Utils.addAttachment("登录用户", Utils.getAbsolutePath("users/username.json"));
         User user = Utils.deserialize("users/username.json", User.class);
-
-        step("step 1: xxxxxxxxxxxxxxxxxxxx");
-
-        logger.info("登录用户： " + Utils.toJSON(user));
-        step("step 2: xxxxxxxxxxxxxxxxxxxxx");
+        loginWith(user);
+        goToShopCart();
     }
 
     @Severity(SeverityLevel.NORMAL)
@@ -52,10 +51,9 @@ public class TestDemoModule  extends BaseTest {
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
     public void simpleTestTwo() {
         User user = Utils.deserialize("users/username.json", User.class);
-        step("step 1: xxxxxxxxxxxxxxxxxxxx");
-
-        int a = 1/0;
-        step("step 2");
+        loginWith(user);
+        goToShopCart();
+        checkShopCart();
     }
 
     @Severity(SeverityLevel.CRITICAL)
@@ -68,13 +66,20 @@ public class TestDemoModule  extends BaseTest {
             "4. xxxxxxxxxxx " +
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
     public void simpleTestThree() throws MalformedURLException {
+        step1();
+        step2();
+    }
 
+    @Step("点击完成跳转至flutter页面")
+    public void step1(){
         FirstPage firstPage = new FirstPage(driver);
         firstPage.goToFlutterPage();
-        step("step 1: 点击完成跳转至flutter页面完成");
+    }
 
+    @Step("打开FirstPage页面")
+    public void step2(){
+        FirstPage firstPage = new FirstPage(driver);
         firstPage.goToOpenFirstPage();
-        step("step 2: openFirstPage页面完成");
     }
 
     @Severity(SeverityLevel.CRITICAL)
@@ -88,10 +93,29 @@ public class TestDemoModule  extends BaseTest {
             "Expected Result: xxxxxxxxxxxxxxxxxxx")
     public void simpleTestFour() throws MalformedURLException {
 
-        FirstPage firstPage = new FirstPage(driver);
-        step("step 1: 打开App");
-        int a = 1/0;
-        step("step 2: 干个啥事呢");
+        step1();
+        checkShopCart();
+        step2();
     }
 
+
+    @Step("登录用户")
+    public void loginWith(User user) {
+        logger.info("登录用户： " + Utils.toJSON(user));
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Step("进入购物车页面.")
+    public void goToShopCart() {
+        logger.info("进入购物车页面");
+    }
+
+    @Step("检查购物车页面.")
+    public void checkShopCart() {
+        assertThat("购物车商品A，显示数量不对", 1, is(2));
+    }
 }
